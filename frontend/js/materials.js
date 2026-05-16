@@ -109,91 +109,164 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderMaterials(materials) {
-    if (!filesGrid) return;
+  if (!filesGrid) return;
 
-    filesGrid.innerHTML = "";
-    selectedMaterialId = null;
-    selectedMaterialName = null;
+  filesGrid.innerHTML = "";
+  selectedMaterialId = null;
+  selectedMaterialName = null;
 
-    if (startSessionBtn) {
-      startSessionBtn.disabled = true;
-    }
+  if (startSessionBtn) {
+    startSessionBtn.disabled = true;
+  }
 
-    if (!Array.isArray(materials) || materials.length === 0) {
-      if (materialsSectionTitle) {
-        materialsSectionTitle.textContent = "No Materials Uploaded";
-      }
-
-      filesGrid.innerHTML = `
-        <div class="file-card empty-card">
-          <div class="file-icon"><i class="fas fa-circle-info"></i></div>
-          <div class="file-info">
-            <h4>No materials found</h4>
-            <p>Upload a PDF, DOCX, or PPTX file to start a quiz.</p>
-          </div>
-        </div>
-      `;
-      return;
-    }
-
+  if (!Array.isArray(materials) || materials.length === 0) {
     if (materialsSectionTitle) {
-      materialsSectionTitle.textContent = "Select Material for Quiz";
+      materialsSectionTitle.textContent = "No Materials Uploaded";
     }
 
-    materials.forEach((material) => {
-      const card = document.createElement("div");
-      card.className = "file-card";
-
-      const materialId = material.id;
-      const materialName = material.filename || `Material ${materialId}`;
-      const details = "Uploaded material";
-
-      card.dataset.materialId = String(materialId);
-      card.dataset.materialName = materialName;
-
-      card.innerHTML = `
-        <div class="file-icon">
-          <i class="fas ${getMaterialIcon(materialName)}"></i>
-        </div>
-
+    filesGrid.innerHTML = `
+      <div class="file-card empty-card">
+        <div class="file-icon"><i class="fas fa-circle-info"></i></div>
         <div class="file-info">
-          <h4>${materialName}</h4>
-          <p>${details}</p>
+          <h4>No materials found</h4>
+          <p>Upload a PDF, DOCX, or PPTX file to start a quiz.</p>
         </div>
+      </div>
+    `;
+    return;
+  }
 
-        <button class="delete-material-btn" type="button" title="Delete material">
-          <i class="fas fa-trash"></i>
-        </button>
-      `;
+  if (materialsSectionTitle) {
+    materialsSectionTitle.textContent = "Select Material for Quiz";
+  }
 
-      card.addEventListener("click", () => {
-        document.querySelectorAll(".file-card").forEach((c) => {
-          c.classList.remove("selected");
-        });
+  materials.forEach((material) => {
+    const card = document.createElement("div");
+    card.className = "file-card";
 
-        card.classList.add("selected");
-        selectedMaterialId = materialId;
-        selectedMaterialName = materialName;
+    const materialId = material.id;
+    const materialName = material.filename || `Material ${materialId}`;
+    const details = "Uploaded material";
 
-        if (startSessionBtn) {
-          startSessionBtn.disabled = false;
-        }
+    card.dataset.materialId = String(materialId);
+    card.dataset.materialName = materialName;
 
-        clearMessage();
+    card.innerHTML = `
+      <div class="file-icon">
+        <i class="fas ${getMaterialIcon(materialName)}"></i>
+      </div>
+
+      <div class="file-info">
+        <h4 class="file-name">${materialName}</h4>
+        <p>${details}</p>
+      </div>
+
+      <button class="rename-course-btn rename-material-btn" type="button" title="Rename material">
+        Rename
+      </button>
+
+      <button class="delete-material-btn" type="button" title="Delete material">
+        <i class="fas fa-trash"></i>
+      </button>
+    `;
+
+    card.addEventListener("click", () => {
+      document.querySelectorAll(".file-card").forEach((c) => {
+        c.classList.remove("selected");
       });
 
-      const deleteBtn = card.querySelector(".delete-material-btn");
+      card.classList.add("selected");
+      selectedMaterialId = materialId;
+      selectedMaterialName = card.dataset.materialName;
 
-      if (deleteBtn) {
-        deleteBtn.addEventListener("click", (event) => {
-          event.stopPropagation();
-          openDeleteModal(materialId);
-        });
+      if (startSessionBtn) {
+        startSessionBtn.disabled = false;
       }
 
-      filesGrid.appendChild(card);
+      clearMessage();
     });
-  }
+
+    const renameMaterialBtn = card.querySelector(".rename-material-btn");
+    const deleteMaterialBtn = card.querySelector(".delete-material-btn");
+    const materialNameEl = card.querySelector(".file-name");
+
+    renameMaterialBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+
+      const input = document.createElement("input");
+      input.value = card.dataset.materialName;
+      input.className = "rename-input";
+
+      materialNameEl.replaceWith(input);
+      input.focus();
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          input.blur();
+        }
+
+        if (e.key === "Escape") {
+          input.replaceWith(materialNameEl);
+        }
+      });
+
+      input.addEventListener("blur", async () => {
+        const newName = input.value.trim();
+
+        if (!newName || newName === card.dataset.materialName) {
+          input.replaceWith(materialNameEl);
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/materials/rename`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              material_id: materialId,
+              new_name: newName
+            })
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            showMessage(data.detail || data.message || "Failed to rename material.");
+            input.replaceWith(materialNameEl);
+            return;
+          }
+
+          material.filename = newName;
+          card.dataset.materialName = newName;
+
+          if (selectedMaterialId === materialId) {
+            selectedMaterialName = newName;
+          }
+
+          const newNameEl = document.createElement("h4");
+          newNameEl.className = "file-name";
+          newNameEl.textContent = newName;
+
+          input.replaceWith(newNameEl);
+
+        } catch (error) {
+          console.error("Rename material error:", error);
+          showMessage("Could not rename material.");
+          input.replaceWith(materialNameEl);
+        }
+      });
+    });
+
+    deleteMaterialBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      openDeleteModal(materialId);
+    });
+
+    filesGrid.appendChild(card);
+  });
+}
 
   async function loadMaterials() {
     clearMessage();
@@ -342,7 +415,8 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("reportData");
     localStorage.removeItem("displayQuestionNumber");
     localStorage.removeItem("sessionStartTime");
-
+    localStorage.removeItem("pausedDuration");
+    
     localStorage.setItem("selectedMaterialId", String(materialIdForSession));
     localStorage.setItem("selectedMaterialName", materialNameForSession);
     localStorage.setItem("quizId", String(data.quiz_id));

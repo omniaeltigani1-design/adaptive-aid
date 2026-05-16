@@ -33,3 +33,7 @@ class CreateMaterialRequest(BaseModel):
 
 class RenameCourseRequest(BaseModel):
     course_name: str
+
+class RenameMaterialRequest(BaseModel):
+    material_id: int
+    new_name: str

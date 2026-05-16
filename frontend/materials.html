@@ -15,11 +15,10 @@
   />
 
   <link rel="stylesheet" href="styles.css">
-
   <script defer src="js/materials.js"></script>
 
   <style>
-    
+
     .selection-section {
       background: #f8f9fa;
       border-radius: 25px;
@@ -43,9 +42,19 @@
 
     .files-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
       gap: 15px;
       margin-bottom: 20px;
+    }
+
+    .file-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px;
+      border-radius: 20px;
+      background: white;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
     }
 
     .file-icon {
@@ -61,6 +70,11 @@
       flex-shrink: 0;
     }
 
+    .file-info {
+      flex: 1;
+      min-width: 0;
+    }
+
     .file-info h4 {
       color: #333;
       font-size: 15px;
@@ -70,6 +84,36 @@
     .file-info p {
       color: #666;
       font-size: 13px;
+    }
+
+    .rename-material-btn {
+      align-self: flex-start;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .delete-material-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #ffe5e5;
+      color: #dc3545;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s ease;
+      margin-left: 8px;
+      align-self: flex-start;
+      position: static;
+      flex-shrink: 0;
+    }
+
+    .delete-material-btn:hover {
+      background: #dc3545;
+      color: white;
+      transform: scale(1.08);
     }
 
     .ai-generating {
@@ -94,9 +138,7 @@
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+      to { transform: rotate(360deg); }
     }
 
     .actions {
@@ -110,34 +152,6 @@
     .fa-file-pdf { color: #dc3545; }
     .fa-file-word { color: #0d6efd; }
     .fa-file-powerpoint { color: #fd7e14; }
-
-.delete-material-btn {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  min-height: 36px;
-
-  flex: 0 0 36px;
-
-  border: none;
-  border-radius: 50%;
-
-  background: #ffe5e5;
-  color: #dc3545;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.delete-material-btn:hover {
-  background: #dc3545;
-  color: white;
-  transform: scale(1.08);
-}
 
   </style>
 </head>
@@ -165,7 +179,6 @@
 
       <div class="files-grid" id="filesGrid"></div>
 
-      
       <div class="ai-generating" id="aiGenerating">
         <div class="spinner"></div>
         <span>Preparing your session...</span>
@@ -186,16 +199,16 @@
   <input type="file" id="fileInput" style="display: none;" />
 
   <div id="deleteModal" class="modal hidden">
-  <div class="modal-content">
-    <h3>Delete Material</h3>
-    <p>Are you sure you want to delete this material?</p>
+    <div class="modal-content">
+      <h3>Delete Material</h3>
+      <p>Are you sure you want to delete this material?</p>
 
-    <div class="modal-actions">
-      <button id="cancelDeleteBtn" class="btn cancel">Cancel</button>
-      <button id="confirmDeleteBtn" class="btn danger">Delete</button>
+      <div class="modal-actions">
+        <button id="cancelDeleteBtn" class="btn cancel">Cancel</button>
+        <button id="confirmDeleteBtn" class="btn danger">Delete</button>
+      </div>
     </div>
   </div>
-</div>
 
 </body>
 </html>

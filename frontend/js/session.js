@@ -39,11 +39,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let timerInterval = null;
+  let pausedDuration = Number(localStorage.getItem("pausedDuration") || 0);
+  let pauseStartedAt = null;
 
   function formatTime(totalSeconds) {
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   }
 
@@ -51,8 +52,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!sessionTimer) return;
 
     function updateTimer() {
-      const elapsedSeconds = Math.floor((Date.now() - Number(sessionStartTime)) / 1000);
-      sessionTimer.textContent = formatTime(elapsedSeconds);
+      const elapsedSeconds = Math.floor(
+        (Date.now() - Number(sessionStartTime) - pausedDuration) / 1000
+      );
+
+      sessionTimer.textContent = formatTime(Math.max(elapsedSeconds, 0));
     }
 
     updateTimer();
@@ -67,6 +71,25 @@ document.addEventListener("DOMContentLoaded", () => {
       clearInterval(timerInterval);
       timerInterval = null;
     }
+  }
+
+  function pauseTimer() {
+    if (pauseStartedAt) return;
+    pauseStartedAt = Date.now();
+    stopTimer();
+  }
+
+  function resumeTimer() {
+    if (!pauseStartedAt) {
+      startTimer();
+      return;
+    }
+
+    pausedDuration += Date.now() - pauseStartedAt;
+    localStorage.setItem("pausedDuration", String(pausedDuration));
+    pauseStartedAt = null;
+
+    startTimer();
   }
 
   function showMessage(text, type = "error") {
@@ -103,6 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (nextQuestionBtn) {
       nextQuestionBtn.style.display = "none";
       nextQuestionBtn.disabled = true;
+      nextQuestionBtn.textContent = "Next Question";
     }
 
     if (endSessionBtn) {
@@ -126,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (nextQuestionBtn) {
       nextQuestionBtn.style.display = "inline-flex";
       nextQuestionBtn.disabled = false;
+      nextQuestionBtn.textContent = "Next Question";
     }
 
     if (endSessionBtn) {
@@ -329,6 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const correctOptionId = Number(data.correct_option_id);
+
       highlightAnswer(
         isSkipped ? null : Number(selectedOptionId),
         correctOptionId,
@@ -336,11 +362,11 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       if (isSkipped) {
-        showMessage( "Question skipped.","neutral");
+        showMessage("Question skipped.", "neutral");
       } else if (data.is_correct === true) {
         showMessage("Correct!", "success");
       } else {
-        showMessage("Incorrect." , "error");
+        showMessage("Incorrect.", "error");
       }
 
       updateTopInfo();
@@ -363,7 +389,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (nextQuestionBtn) {
       nextQuestionBtn.disabled = true;
+      nextQuestionBtn.textContent = "Generating...";
     }
+
+    if (endSessionBtn) {
+      endSessionBtn.disabled = true;
+    }
+
+    pauseTimer();
+    showMessage("Generating the next question. Please wait...", "neutral");
 
     const nextQuestion = await fetchNextQuestion();
 
@@ -371,7 +405,18 @@ document.addEventListener("DOMContentLoaded", () => {
       displayQuestionNumber += 1;
       localStorage.setItem("displayQuestionNumber", String(displayQuestionNumber));
       renderQuestion(nextQuestion);
+    } else {
+      if (nextQuestionBtn) {
+        nextQuestionBtn.disabled = false;
+        nextQuestionBtn.textContent = "Next Question";
+      }
+
+      if (endSessionBtn) {
+        endSessionBtn.disabled = false;
+      }
     }
+
+    resumeTimer();
   }
 
   async function endSession() {
@@ -402,6 +447,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       stopTimer();
       localStorage.removeItem("sessionStartTime");
+      localStorage.removeItem("pausedDuration");
 
       window.location.href = "report.html";
 
@@ -436,11 +482,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    pauseTimer();
+    showMessage("Loading question. Please wait...", "neutral");
+
     const firstQuestion = await fetchNextQuestion();
 
     if (firstQuestion) {
+      clearMessage();
       renderQuestion(firstQuestion);
     }
+
+    resumeTimer();
   }
 
   if (submitAnswerBtn) {

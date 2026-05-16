@@ -8,6 +8,7 @@ from sqlmodel import Session, select
 
 from app.db import get_session
 from app.models import Course, CourseMaterial
+from app.schemas import RenameMaterialRequest
 
 from app.services.material_service import save_extracted_text
 
@@ -28,6 +29,21 @@ ALLOWED_MIME_TYPES = {
 
 TEXT_DIR = Path("uploads/extracted_text")
 TEXT_DIR.mkdir(parents=True, exist_ok=True)
+
+@router.put("/rename")
+def rename_material(data: RenameMaterialRequest, session: Session = Depends(get_session)):
+    material = session.get(CourseMaterial, data.material_id)
+
+    if not material:
+        raise HTTPException(status_code=404, detail="Material not found")
+
+    material.filename = data.new_name.strip()
+
+    session.add(material)
+    session.commit()
+    session.refresh(material)
+
+    return {"message": "Material renamed successfully"}
 
 @router.post("/upload")
 def upload_material(

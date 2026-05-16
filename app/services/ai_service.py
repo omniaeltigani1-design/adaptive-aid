@@ -144,8 +144,6 @@ Material:
 
     content = response.choices[0].message.content
 
-    content = response.choices[0].message.content
-
     try:
         data = json.loads(content)
 
@@ -167,8 +165,8 @@ Material:
                     is_duplicate = True
                     break
 
-        if not is_duplicate:
-            filtered_questions.append(q)
+            if not is_duplicate:
+                filtered_questions.append(q)
 
         data["questions"] = filtered_questions
 

@@ -1,6 +1,9 @@
 const API_BASE_URL = "http://127.0.0.1:8000";
 
 document.addEventListener("DOMContentLoaded", () => {
+  const endEmptySessionModal = document.getElementById("endEmptySessionModal");
+  const cancelEndEmptyBtn = document.getElementById("cancelEndEmptyBtn");
+  const confirmEndEmptyBtn = document.getElementById("confirmEndEmptyBtn");
   const questionText = document.getElementById("questionText");
   const optionsContainer = document.getElementById("optionsList");
   const submitAnswerBtn = document.getElementById("submitBtn");
@@ -397,10 +400,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     pauseTimer();
-    showMessage("Generating the next question. Please wait...", "neutral");
 
-    const nextQuestion = await fetchNextQuestion();
+/* Clear previous question while generating the next one */
+if (questionText) {
+  questionText.textContent = "Generating the next question. Please wait...";
+}
 
+if (optionsContainer) {
+  optionsContainer.innerHTML = "";
+}
+
+if (difficultyBadge) {
+  difficultyBadge.textContent = "";
+}
+
+clearMessage();
+
+const nextQuestion = await fetchNextQuestion();
     if (nextQuestion) {
       displayQuestionNumber += 1;
       localStorage.setItem("displayQuestionNumber", String(displayQuestionNumber));
@@ -418,7 +434,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     resumeTimer();
   }
+  function openEndEmptySessionModal() {
+  if (endEmptySessionModal) {
+    endEmptySessionModal.classList.remove("hidden");
+  }
+}
 
+function closeEndEmptySessionModal() {
+  if (endEmptySessionModal) {
+    endEmptySessionModal.classList.add("hidden");
+  }
+}
   async function endSession() {
     clearMessage();
 
@@ -427,6 +453,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // prevent accidental empty session
+    if (answeredCount === 0) {
+  openEndEmptySessionModal();
+  return;
+}
     setButtonsDisabled(true);
 
     try {
@@ -511,5 +542,21 @@ document.addEventListener("DOMContentLoaded", () => {
     endSessionBtn.addEventListener("click", endSession);
   }
 
+  if (cancelEndEmptyBtn) {
+  cancelEndEmptyBtn.addEventListener("click", closeEndEmptySessionModal);
+}
+
+if (confirmEndEmptyBtn) {
+  confirmEndEmptyBtn.addEventListener("click", async () => {
+    closeEndEmptySessionModal();
+
+    const originalAnsweredCount = answeredCount;
+    answeredCount = 1;
+
+    await endSession();
+
+    answeredCount = originalAnsweredCount;
+  });
+}
   initializeSession();
 });

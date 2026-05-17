@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="styles.css">
 
   <script defer src="js/report.js"></script>
 
@@ -21,15 +20,6 @@
       margin-bottom: 25px;
     }
 
-    .score-card {
-      background: linear-gradient(145deg, #4158D0, #C850C0);
-      color: white;
-      border-radius: 28px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-    }
-
     .score-card .label {
       font-size: 14px;
       opacity: 0.9;
@@ -40,6 +30,11 @@
       font-size: 42px;
       font-weight: 700;
       line-height: 1.1;
+    }
+
+    .score-card .score-text.no-attempt {
+      font-size: 22px;
+      line-height: 1.3;
     }
 
     .score-card {
@@ -170,8 +165,10 @@
       }
     }
   </style>
+    <link rel="stylesheet" href="styles.css">
+
 </head>
-<body>
+<body class="report-page">
   <div class="container">
     <div class="header">
       <div>

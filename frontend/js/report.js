@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderTags(container, items, className, fallbackText) {
     if (!container) return;
+
     container.innerHTML = "";
 
     if (!Array.isArray(items) || items.length === 0) {
@@ -71,9 +72,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const medium = difficulty.medium || {};
     const hard = difficulty.hard || {};
 
+    const noAttempts = (totals.total_answered ?? 0) === 0;
+    const scoreTextValue = noAttempts
+      ? "No questions attempted"
+      : (overall.score_text || `${totals.total_correct || 0}/${totals.total_answered || 0}`);
+
     if (scoreText) {
-      scoreText.textContent =
-        overall.score_text || `${totals.total_correct || 0}/${totals.total_answered || 0}`;
+      scoreText.textContent = scoreTextValue;
+
+      if (noAttempts || scoreTextValue === "No questions attempted") {
+        scoreText.classList.add("no-attempt");
+      } else {
+        scoreText.classList.remove("no-attempt");
+      }
     }
 
     if (scorePercent) {
@@ -102,17 +113,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (summaryText) {
-      const scoreLine = overall.score_text || `${totals.total_correct || 0}/${totals.total_answered || 0}`;
       const percentLine = `${Number(overall.score_percent ?? 0).toFixed(1)}%`;
       const durationLine = overall.session_duration_text || "0m 0s";
 
-      summaryText.textContent =
-        `You completed this session with an overall performance of ${scoreLine} (${percentLine}). ` +
-        `Your session lasted ${durationLine}, with ${totals.total_skipped ?? 0} skipped question(s).`;
+      if (noAttempts) {
+        summaryText.textContent =
+          `You ended this session before answering or skipping any questions. ` +
+          `Your session lasted ${durationLine}.`;
+      } else {
+        summaryText.textContent =
+          `You completed this session with an overall performance of ${scoreTextValue} (${percentLine}). ` +
+          `Your session lasted ${durationLine}, with ${totals.total_skipped ?? 0} skipped question(s).`;
+      }
     }
 
-    renderTags(strengthsList, summary.strengths || [], "tag-strong", "No strong areas identified yet");
-    renderTags(weaknessesList, summary.weaknesses || [], "tag-weak", "No weak areas identified yet");
+    renderTags(
+      strengthsList,
+      summary.strengths || [],
+      "tag-strong",
+      "No clear strength identified yet"
+    );
+
+    renderTags(
+      weaknessesList,
+      summary.weaknesses || [],
+      "tag-weak",
+      "No clear weakness identified yet"
+    );
 
     if (easyCorrect) easyCorrect.textContent = easy.correct ?? 0;
     if (easyWrong) easyWrong.textContent = easy.wrong ?? 0;
@@ -127,7 +154,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (hardSkipped) hardSkipped.textContent = hard.skipped ?? 0;
 
     if (reportSubtitle) {
-      reportSubtitle.textContent = "Your session summary is ready";
+      reportSubtitle.textContent = noAttempts
+        ? "No questions were attempted in this session"
+        : "Your session summary is ready";
     }
   }
 

@@ -513,7 +513,7 @@ def end_quiz(quiz_id: int, session: Session = Depends(get_session)):
     report_summary = {
         "quiz_id": quiz.id,
         "overall_performance": {
-            "score_text": f"{total_correct}/{total_answered}",
+            "score_text": f"{total_correct}/{total_answered}" if total_answered > 0 else "No questions attempted",
             "score_percent": round(score_percent, 1),
             "session_duration_seconds": duration_seconds,
             "session_duration_text": duration_text

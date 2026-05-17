@@ -1183,3 +1183,260 @@ body:has(.score-banner) .actions {
 .course-card.selected .course-details {
   display: block !important;
 }
+
+/* ===== FINAL UNIFORM LAYOUT PATCH ===== */
+
+/* Main dashboard pages */
+.container {
+  width: 100% !important;
+  max-width: 1100px !important;
+  margin: 0 auto !important;
+  padding: 28px !important;
+}
+
+/* Centered auth pages: login, register, forgot, reset, verify */
+.center-page {
+  min-height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.center-page .container,
+.auth-card,
+.verify-card,
+.reset-card {
+  width: 100% !important;
+  max-width: 500px !important;
+  min-width: 0 !important;
+  margin: 0 auto !important;
+  padding: 36px !important;
+}
+
+/* Make all page cards visually consistent */
+.course-card,
+.file-card,
+.report-card,
+.stat-card,
+.panel,
+.summary-card,
+.question-card,
+.add-course-box,
+.selection-section,
+.modal-content {
+  border-radius: 22px !important;
+  padding: 20px !important;
+}
+
+/* Stop grid cards from stretching weirdly */
+.courses-grid,
+.files-grid,
+.reports-list,
+.stats-grid {
+  align-items: start !important;
+}
+
+/* Consistent internal cards */
+.course-card,
+.file-card,
+.report-card {
+  width: 100% !important;
+  min-height: unset !important;
+  height: auto !important;
+  align-self: start !important;
+}
+
+/* Course cards compact until selected */
+.course-card:not(.selected) {
+  padding: 16px !important;
+}
+
+.course-card:not(.selected) .course-details {
+  display: none !important;
+}
+
+.course-card.selected {
+  padding: 20px !important;
+}
+
+.course-card.selected .course-details {
+  display: block !important;
+  margin-top: 14px !important;
+}
+
+/* Better course header alignment */
+.course-card-header {
+  align-items: center !important;
+}
+
+.course-card:not(.selected) h3 {
+  margin-bottom: 0 !important;
+}
+
+/* Uniform forms */
+form {
+  width: 100% !important;
+}
+
+input,
+.auth-input,
+.form-group input,
+.add-course-form input {
+  width: 100% !important;
+}
+
+/* Keep login/register/reset card same feeling */
+#loginForm,
+#registerForm {
+  width: 100% !important;
+}
+
+/* Fix forgot password button spacing */
+#sendBtn,
+#resetBtn {
+  margin-top: 14px !important;
+}
+
+/* More readable progress text */
+.stat-row span,
+.stat-row strong,
+.course-stats span,
+.course-stats strong {
+  color: #ffffff !important;
+}
+
+/* Report history score badge */
+.score-badge {
+  background: rgba(255,255,255,0.14) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,0.25) !important;
+}
+
+/* Make section titles readable */
+.section-title,
+.section-title span,
+#materialsSectionTitle {
+  color: #ffffff !important;
+}
+
+/* Rename button hover effect */
+.rename-course-btn:hover,
+.rename-material-btn:hover {
+  background: linear-gradient(120deg, #8b5cf6, #2196f3) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 18px rgba(139,92,246,0.45) !important;
+  transform: translateY(-1px);
+}
+
+/* Fix browser autofill turning inputs white */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+  box-shadow: 0 0 0 1000px rgba(255,255,255,0.09) inset !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Stronger ombre buttons */
+.btn-primary,
+.setup-session-btn,
+#loginBtn,
+#registerBtn,
+#sendBtn,
+#resetBtn,
+#submitBtn,
+#nextQuestionBtn,
+#startSessionBtn,
+#newSessionBtn {
+  background: linear-gradient(120deg, #e040fb 0%, #8b5cf6 45%, #2196f3 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 0 18px rgba(224,64,251,0.35),
+    0 0 28px rgba(33,150,243,0.25) !important;
+}
+
+/* Modal buttons alignment */
+.modal-actions {
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.modal-actions .btn,
+.modal-actions button {
+  width: auto !important;
+  min-width: 120px !important;
+}
+
+/* Compact report page if you added class="report-page" */
+.report-page {
+  padding: 10px !important;
+}
+
+.report-page .container {
+  max-width: 980px !important;
+  padding: 18px !important;
+}
+
+.report-page .header {
+  padding: 14px 18px !important;
+  margin-bottom: 14px !important;
+}
+
+.report-page .score-banner {
+  grid-template-columns: 160px 1fr !important;
+  gap: 12px !important;
+  margin-bottom: 14px !important;
+}
+
+.report-page .score-card {
+  padding: 18px !important;
+}
+
+.report-page .score-card .score-text {
+  font-size: 30px !important;
+}
+
+.report-page .summary-card,
+.report-page .panel {
+  padding: 16px !important;
+}
+
+.report-page .stats-grid {
+  gap: 10px !important;
+  margin-bottom: 14px !important;
+}
+
+.report-page .stat-card {
+  padding: 12px !important;
+}
+
+.report-page .stat-value {
+  font-size: 22px !important;
+}
+
+.report-page .section-grid {
+  gap: 12px !important;
+  margin-bottom: 14px !important;
+}
+
+.report-page .difficulty-table th,
+.report-page .difficulty-table td {
+  padding: 8px 10px !important;
+}
+
+.report-page .actions {
+  margin-top: 12px !important;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .container,
+  .center-page .container,
+  .auth-card,
+  .verify-card,
+  .reset-card {
+    max-width: 100% !important;
+    padding: 22px !important;
+  }
+}

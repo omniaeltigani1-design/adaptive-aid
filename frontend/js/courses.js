@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://adaptive-aid-production.up.railway.app";
 const COURSES_ENDPOINT = `${API_BASE_URL}/courses`;
 const ANALYTICS_ENDPOINT = `${API_BASE_URL}/analytics/student`;
 

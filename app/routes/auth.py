@@ -25,7 +25,7 @@ MAIL_SERVER = os.getenv("MAIL_SERVER")
 MAIL_PORT = int(os.getenv("MAIL_PORT", "587"))
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://127.0.0.1:5500")
-BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
+BACKEND_URL = os.getenv("BACKEND_URL", "http://https://adaptive-aid-production.up.railway.app")
 
 conf = ConnectionConfig(
     MAIL_USERNAME=MAIL_USERNAME,

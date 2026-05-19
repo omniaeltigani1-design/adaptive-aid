@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "http://https://adaptive-aid-production.up.railway.app";
 const LOGIN_ENDPOINT = `${API_BASE_URL}/auth/login`;
 
 document.addEventListener("DOMContentLoaded", () => {

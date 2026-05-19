@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "http://https://adaptive-aid-production.up.railway.app";
 const MATERIALS_ENDPOINT = `${API_BASE_URL}/materials/course`;
 const UPLOAD_ENDPOINT = `${API_BASE_URL}/materials/upload`;
 const START_QUIZ_ENDPOINT = `${API_BASE_URL}/questions/generate-from-material`;

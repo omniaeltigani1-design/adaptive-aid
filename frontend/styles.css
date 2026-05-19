@@ -1440,3 +1440,33 @@ input:-webkit-autofill:focus {
     padding: 22px !important;
   }
 }
+
+/* ===== FIX QUIZ OPTIONS VISIBILITY ===== */
+
+.option,
+.option-item,
+.option-card {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.option span,
+.option-text {
+  color: #f8fafc !important;
+}
+
+.option:hover {
+  background: rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Correct / Incorrect states */
+.option.correct {
+  background: rgba(34, 197, 94, 0.2) !important;
+  color: #bbf7d0 !important;
+}
+
+.option.incorrect {
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: #fecaca !important;
+}
